@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz : Démarche Marketing & Définition des Marchés</title>
+    <style>
+        body {
+            font-family: 'Mayan', sans-serif;
+            margin: 0;
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            background-repeat: no-repeat;
+            color: #333;
+            text-align: center;
+        }
+        .quiz-container, .summary {
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.8);
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            position: relative;
+            background-image: url('images/back.jpg.webp');
+            background-size: cover;
+            background-position: center;
+        }
+        .question {
+            font-size: 18px;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #000;
+        }
+        .choices {
+            list-style: none;
+            padding: 0;
+            text-align: left;
+            margin-left: 20%;
+        }
+        .choices li {
+            margin: 8px 0;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FF0000;
+            color: white;
+            border-radius: 10px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #CC0000;
+        }
+        .summary {
+            display: none;
+        }
+        .summary ul {
+            list-style: none;
+            padding: 0;
+        }
+        .summary li {
+            text-align: left;
+            margin-left: 20%;
+            margin-bottom: 10px;
+        }
+        .correct {
+            color: green;
+            font-weight: bold;
+        }
+        .incorrect {
+            color: red;
+            font-weight: bold;
+        }
+        .score {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        @media (max-width: 768px) {
+            .quiz-container, .summary {
+                max-width: 90%;
+                margin: 20px auto;
+                padding: 15px;
+                border-radius: 10px;
+            }
+            button {
+                font-size: 14px;
+                padding: 8px 16px;
+            }
+        }
+        @media (max-width: 480px) {
+            .quiz-container, .summary {
+                padding: 10px;
+                margin: 10px;
+                border-radius: 10px;
+            }
+            .question {
+                font-size: 16px;
+            }
+            button {
+                font-size: 12px;
+                padding: 6px 12px;
+                border-radius: 10px;
+            }
+        }
+        @media (min-width: 1024px) {
+            .quiz-container, .summary {
+                max-width: 800px;
+                padding: 30px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="quiz-container" id="quiz-container">
+    <h2>QCM ENTRAINEMENT - Products, Services, and Branding</h2>
+    <div id="question-container">
+        <!-- Les questions seront affichées ici dynamiquement -->
+    </div>
+    <button id="next-button" onclick="nextQuestion()">Suivant</button>
+</div>
+
+<div class="summary" id="summary">
+    <h3>Récapitulatif</h3>
+    <ul id="summary-list">
+        <!-- Le récapitulatif des réponses sera affiché ici -->
+    </ul>
+    <div class="score" id="score"></div>
+    <button onclick="restartQuiz()">Recommencer</button>
+</div>
+
+<script>
+    const quizData = [
+        { question: "What is the definition of a product in marketing terms?", choices: ["A physical item that is sold to consumers", "Anything that can be offered in a market to satisfy a need or want", "A service provided by a company to its customers", "A luxury good that appeals to high-end consumers"], correct: 1 },
+        { question: "Which of the following is an example of a service?", choices: ["A smartphone", "A laptop", "A hotel stay", "A pair of shoes"], correct: 2 },
+        { question: "What does core customer value refer to in the context of product levels?", choices: ["The actual physical product", "The fundamental benefit or solution that customers seek", "The brand name and packaging of a product", "The tangible aspects of a service"], correct: 1 },
+        { question: "Which of the following is not a characteristic of services?", choices: ["Intangibility", "Variability", "Perishability", "Ownership"], correct: 3 },
+        { question: "What does brand equity represent?", choices: ["The value of a company's total assets", "The differential effect that knowing the brand name has on customer response to the product", "The physical assets a company holds", "The amount of money a company spends on marketing"], correct: 1 },
+        { question: "Which of the following is an example of a product line?", choices: ["Different brands of soft drinks owned by the same company", "A single product sold in multiple regions", "Different flavors of a snack produced by a single brand", "A single type of service offered by a company"], correct: 2 },
+        { question: "What is a key difference between a product and a service?", choices: ["Products are tangible, while services are intangible", "Products are offered only in retail stores, while services are provided online", "Services are cheaper than products", "Services do not need to meet customer expectations"], correct: 0 },
+        { question: "What is an example of a brand extension?", choices: ["A company creating a new logo for its existing product", "Apple extending its brand from computers to smartphones with the iPhone", "A clothing brand launching a new line of jeans", "A restaurant adding more seating capacity"], correct: 1 },
+        { question: "Which of the following is not a major decision in branding strategy?", choices: ["Brand positioning", "Product pricing", "Brand name selection", "Brand development"], correct: 1 },
+        { question: "What is the packaging of a product designed to achieve?", choices: ["To provide convenience in distribution and transportation", "To enhance the shelf life of a product", "To identify the product and help promote it", "To reduce the production cost of the product"], correct: 2 },
+        { question: "Which term refers to the group of closely related products that a company offers?", choices: ["Product mix", "Product line", "Product extension", "Product category"], correct: 1 },
+        { question: "In branding, what does brand positioning focus on?", choices: ["The logo design and color scheme of the brand", "Creating an emotional connection with the consumer based on attributes, benefits, and values", "Pricing products according to competitors’ pricing", "Promoting the product through advertising campaigns"], correct: 1 },
+        { question: "Which of the following is a characteristic of a strong brand name?", choices: ["It is long and complex", "It is generic and can be applied to any product", "It suggests product benefits and is easy to pronounce", "It is difficult to translate into other languages"], correct: 2 },
+        { question: "What is an example of brand sponsorship?", choices: ["A company manufacturing both branded and private-label products", "A company creating a new version of its logo", "A company launching an advertising campaign", "A company acquiring another company in the same industry"], correct: 0 },
+        { question: "Which of the following refers to the total range of products a company offers?", choices: ["Product line", "Product mix", "Product depth", "Product category"], correct: 1 }
+    ];
+
+    let currentQuestionIndex = 0;
+    let selectedAnswers = [];
+
+    function loadQuestion() {
+        const container = document.getElementById('question-container');
+        container.innerHTML = '';
+
+        const questionData = quizData[currentQuestionIndex];
+        const questionElem = document.createElement('div');
+        questionElem.className = 'question';
+        questionElem.textContent = questionData.question;
+
+        const choicesElem = document.createElement('ul');
+        choicesElem.className = 'choices';
+
+        questionData.choices.forEach((choice, index) => {
+            const choiceElem = document.createElement('li');
+            const choiceInput = document.createElement('input');
+            choiceInput.type = 'radio';
+            choiceInput.name = 'choice';
+            choiceInput.value = index;
+            choiceInput.id = `choice${index}`;
+            
+            const choiceLabel = document.createElement('label');
+            choiceLabel.htmlFor = `choice${index}`;
+            choiceLabel.textContent = choice;
+
+            choiceElem.appendChild(choiceInput);
+            choiceElem.appendChild(choiceLabel);
+            choicesElem.appendChild(choiceElem);
+        });
+
+        container.appendChild(questionElem);
+        container.appendChild(choicesElem);
+    }
+
+    function nextQuestion() {
+        const selectedChoice = document.querySelector('input[name="choice"]:checked');
+        if (!selectedChoice) {
+            alert("Veuillez sélectionner une réponse !");
+            return;
+        }
+
+        selectedAnswers.push(parseInt(selectedChoice.value));
+        currentQuestionIndex++;
+
+        if (currentQuestionIndex < quizData.length) {
+            loadQuestion();
+        } else {
+            showSummary();
+        }
+    }
+
+    function showSummary() {
+        document.getElementById('quiz-container').style.display = 'none';
+        const summary = document.getElementById('summary');
+        summary.style.display = 'block';
+
+        const summaryList = document.getElementById('summary-list');
+        summaryList.innerHTML = '';
+
+        let correctAnswers = 0;
+
+        quizData.forEach((q, index) => {
+            const summaryItem = document.createElement('li');
+            summaryItem.innerHTML = `
+                <strong>${q.question}</strong><br>
+                <div style="text-align: left; margin-left: 20%;">
+                    Votre réponse: ${q.choices[selectedAnswers[index]]} - 
+                    ${selectedAnswers[index] === q.correct ? '<span class="correct">Correct</span>' : '<span class="incorrect">Incorrect</span>'}<br>
+                    Bonne réponse: ${q.choices[q.correct]}
+                </div>
+            `;
+            summaryList.appendChild(summaryItem);
+            if (selectedAnswers[index] === q.correct) {
+                correctAnswers++;
+            }
+        });
+
+        document.getElementById('score').textContent = `Score: ${correctAnswers} / ${quizData.length}`;
+    }
+
+    function restartQuiz() {
+        currentQuestionIndex = 0;
+        selectedAnswers = [];
+        document.getElementById('summary').style.display = 'none';
+        document.getElementById('quiz-container').style.display = 'block';
+        loadQuestion();
+    }
+
+    loadQuestion();
+</script>
+
+</body>
+
+
+
+</html>
